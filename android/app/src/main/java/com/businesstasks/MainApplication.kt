@@ -1,4 +1,4 @@
-package com.businestasks
+package com.businesstasks
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "770037409705",
-    "project_id": "businestasks-d91ec",
-    "storage_bucket": "businestasks-d91ec.appspot.com"
+    "project_number": "1081364513785",
+    "project_id": "businesstasks-30be1",
+    "storage_bucket": "businesstasks-30be1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:770037409705:android:3415931c39c757794386b8",
+        "mobilesdk_app_id": "1:1081364513785:android:5c20381ca1aab35a1a3328",
         "android_client_info": {
-          "package_name": "com.businestasks"
+          "package_name": "com.businesstasks"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA_mBzT3L3RHzzgtSgDm8oyrkqGlbxDti4"
+          "current_key": "AIzaSyA7D0pRE0ZZ4_ws8UxkHq4Sukq0f-ZVUGE"
         }
       ],
       "services": {
