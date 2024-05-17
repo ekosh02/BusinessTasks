@@ -1,5 +1,5 @@
 import {DarkTheme, LightTheme} from '../constants';
-import {useDarkMode} from '../provider';
+import {useDarkMode} from '../providers';
 
 const useTheme = () => {
   const {isDarkMode} = useDarkMode();

@@ -1,5 +1,5 @@
 import { RootNavigation } from './navigations';
-import { DarkModeProvider } from './provider';
+import { DarkModeProvider } from './providers';
 
 
 const Main = () => {
