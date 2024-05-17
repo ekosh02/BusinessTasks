@@ -1,7 +1,13 @@
-import {View} from 'react-native';
+import { RootNavigation } from './navigations';
+import { DarkModeProvider } from './provider';
+
 
 const Main = () => {
-  return <View></View>;
+  return (
+    <DarkModeProvider>
+      <RootNavigation />
+    </DarkModeProvider>
+  );
 };
 
 export default Main;
