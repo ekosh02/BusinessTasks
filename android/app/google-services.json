@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "770037409705",
+    "project_id": "businestasks-d91ec",
+    "storage_bucket": "businestasks-d91ec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770037409705:android:3415931c39c757794386b8",
+        "android_client_info": {
+          "package_name": "com.businestasks"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_mBzT3L3RHzzgtSgDm8oyrkqGlbxDti4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
