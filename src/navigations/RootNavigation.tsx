@@ -6,8 +6,8 @@ import {ComponentType} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {RootNavigationType} from '../@types';
 import SplashScreen from '../screens/splash/SplashScreen';
-import TasksScreen from '../screens/bottomTabs/TasksTabScreen';
 import {BottomNavigation} from './index';
+import LoginScreen from '../screens/auth/LoginScreen';
 
 const Stack = createStackNavigator<RootNavigationType>();
 
@@ -30,9 +30,9 @@ const RootNavigation = () => {
       options: {headerShown: false},
     },
     {
-      name: 'TasksScreen',
-      component: TasksScreen,
-      options: {headerShown: false},
+      name: 'LoginScreen',
+      component: LoginScreen,
+      options: {headerShown: true},
     },
   ];
 
