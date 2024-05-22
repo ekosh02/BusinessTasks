@@ -2,7 +2,7 @@ import {
   StackNavigationOptions,
   createStackNavigator,
 } from '@react-navigation/stack';
-import {ComponentType} from 'react';
+import {ComponentType, useMemo} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {RootNavigationType} from '../@types';
 import SplashScreen from '../screens/splash/SplashScreen';
@@ -18,23 +18,26 @@ type RouteType = {
 };
 
 const RootNavigation = () => {
-  const routes: RouteType[] = [
-    {
-      name: 'SplashScreen',
-      component: SplashScreen,
-      options: {headerShown: false},
-    },
-    {
-      name: 'BottomNavigation',
-      component: BottomNavigation,
-      options: {headerShown: false},
-    },
-    {
-      name: 'LoginScreen',
-      component: LoginScreen,
-      options: {headerShown: true},
-    },
-  ];
+  const routes = useMemo<RouteType[]>(
+    () => [
+      {
+        name: 'SplashScreen',
+        component: SplashScreen,
+        options: {headerShown: false},
+      },
+      {
+        name: 'BottomNavigation',
+        component: BottomNavigation,
+        options: {headerShown: false},
+      },
+      {
+        name: 'LoginScreen',
+        component: LoginScreen,
+        options: {headerShown: true},
+      },
+    ],
+    [],
+  );
 
   return (
     <NavigationContainer>
