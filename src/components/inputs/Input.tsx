@@ -1,10 +1,12 @@
 import {ReactNode, useMemo, useState} from 'react';
 import {
+  GestureResponderEvent,
   StyleProp,
   StyleSheet,
   TextInput,
   TextInputProps,
   TextStyle,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {useTheme} from '../../hooks';
@@ -13,12 +15,16 @@ interface InputProps extends TextInputProps {
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   placeholder?: string;
+  onPressLeftIcon?: ((event: GestureResponderEvent) => void) | undefined;
+  onPressRightIcon?: ((event: GestureResponderEvent) => void) | undefined;
 }
 
 const Input = ({
   leftIcon = undefined,
   rightIcon = undefined,
   placeholder = 'Input',
+  onPressLeftIcon,
+  onPressRightIcon,
   ...props
 }: InputProps) => {
   const {colors, dark} = useTheme();
@@ -34,7 +40,7 @@ const Input = ({
 
   return (
     <View style={[styles.rowView, dynamicRowView]}>
-      {leftIcon}
+      <TouchableOpacity onPress={onPressLeftIcon}>{leftIcon}</TouchableOpacity>
       <TextInput
         style={styles.textInputView}
         onFocus={() => setFocus(true)}
@@ -42,7 +48,9 @@ const Input = ({
         placeholder={placeholder}
         {...props}
       />
-      {rightIcon}
+      <TouchableOpacity onPress={onPressRightIcon}>
+        {rightIcon}
+      </TouchableOpacity>
     </View>
   );
 };
