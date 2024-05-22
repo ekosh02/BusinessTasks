@@ -5,6 +5,10 @@ type colorType = {
     background: string;
     font: string;
     border: string;
+    input: {
+      border: string;
+      background: string;
+    };
   };
 };
 
