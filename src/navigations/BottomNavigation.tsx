@@ -5,6 +5,8 @@ import {
 import React, {ComponentType} from 'react';
 import {BottomNavigationType} from '../@types';
 import TasksTabScreen from '../screens/bottomTabs/TasksTabScreen';
+import ProfileTabScreen from '../screens/bottomTabs/ProfileTabScreen';
+import {ProfileIcon, TaskIcon} from '../assets';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,7 +22,14 @@ const BottomNavigation = () => {
       name: 'TasksTabScreen',
       component: TasksTabScreen,
       options: {
-        // tabBarIcon: ({ focused }) => <TasksIcon active={focused} />,
+        tabBarIcon: ({focused}) => <TaskIcon active={focused} />,
+      },
+    },
+    {
+      name: 'ProfileTabScreen',
+      component: ProfileTabScreen,
+      options: {
+        tabBarIcon: ({focused}) => <ProfileIcon active={focused} />,
       },
     },
   ];

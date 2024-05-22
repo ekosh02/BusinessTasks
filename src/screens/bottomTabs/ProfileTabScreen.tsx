@@ -2,12 +2,12 @@ import React from 'react';
 import {Text} from 'react-native';
 import {Viewer} from '../../components';
 
-const TasksTabScreen = () => {
+const ProfileTabScreen = () => {
   return (
     <Viewer>
-      <Text>TasksTabScreen</Text>
+      <Text>ProfileTabScreen</Text>
     </Viewer>
   );
 };
 
-export default TasksTabScreen;
+export default ProfileTabScreen;
