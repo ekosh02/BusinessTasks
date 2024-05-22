@@ -1,22 +1,31 @@
 import React from 'react';
 import {
+  ActivityIndicator,
   GestureResponderEvent,
   StyleProp,
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableOpacityProps,
   ViewStyle,
 } from 'react-native';
 import {useTheme} from '../../hooks';
 import {useMemo} from 'react';
 import {typography} from './../../utils';
 
-interface PrimaryButtonProps {
+interface PrimaryButtonProps extends TouchableOpacityProps {
   title?: string;
   onPress?: ((event: GestureResponderEvent) => void) | undefined;
+  style?: StyleProp<ViewStyle> | undefined;
+  loading?: boolean;
 }
 
-const PrimaryButton = ({title = 'Press', onPress}: PrimaryButtonProps) => {
+const PrimaryButton = ({
+  title = 'Press',
+  style,
+  loading = false,
+  ...props
+}: PrimaryButtonProps) => {
   const {colors, dark} = useTheme();
 
   const dynamicButtonView = useMemo<StyleProp<ViewStyle> | undefined>(
@@ -28,9 +37,14 @@ const PrimaryButton = ({title = 'Press', onPress}: PrimaryButtonProps) => {
 
   return (
     <TouchableOpacity
-      style={[dynamicButtonView, styles.buttonView]}
-      onPress={onPress}>
-      <Text style={styles.text}>{title}</Text>
+      style={[dynamicButtonView, styles.buttonView, style]}
+      disabled={loading}
+      {...props}>
+      {loading ? (
+        <ActivityIndicator color={'#fff'} />
+      ) : (
+        <Text style={styles.text}>{title}</Text>
+      )}
     </TouchableOpacity>
   );
 };
@@ -45,7 +59,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#fff',
-    ...typography('headings'),
+    ...typography('rounded'),
   },
 });
 
