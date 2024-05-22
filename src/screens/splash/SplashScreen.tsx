@@ -16,7 +16,8 @@ const SplashScreen = ({navigation}: SplasScreenType) => {
 
   const {colors} = useTheme();
 
-  const {token} = useUser();
+  const {user} = useUser();
+
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -28,7 +29,7 @@ const SplashScreen = ({navigation}: SplasScreenType) => {
 
   useEffect(() => {
     setTimeout(
-      () => navigation.replace(token ? 'BottomNavigation' : 'LoginScreen'),
+      () => navigation.replace(user?.uid ? 'BottomNavigation' : 'LoginScreen'),
       1500,
     );
   }, []);
