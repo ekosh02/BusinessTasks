@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   StyleProp,
   ViewStyle,
+  StyleSheet,
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useTheme} from '../../hooks';
@@ -27,27 +28,23 @@ const Viewer = ({
 }: ViewerProps) => {
   const {colors, dark} = useTheme();
 
-  const buttonStyle = useMemo<StyleProp<ViewStyle> | undefined>(
+  const dynamicView = useMemo<StyleProp<ViewStyle> | undefined>(
     () => ({
-      flex: 1,
       backgroundColor: colors.background,
     }),
     [dark],
   );
 
-  const loaderStyle = useMemo<StyleProp<ViewStyle> | undefined>(
+  const dynamicLoaderView = useMemo<StyleProp<ViewStyle> | undefined>(
     () => ({
-      flex: 1,
       backgroundColor: colors.background,
-      justifyContent: 'center',
-      alignItems: 'center',
     }),
     [dark],
   );
 
   if (loading) {
     return (
-      <View style={loaderStyle}>
+      <View style={[styles.loaderView, dynamicLoaderView]}>
         <ActivityIndicator color={colors.primary} size={'large'} />
       </View>
     );
@@ -56,7 +53,7 @@ const Viewer = ({
   if (scroll) {
     if (safeArea && Platform.OS === 'ios') {
       return (
-        <SafeAreaView style={buttonStyle}>
+        <SafeAreaView style={[styles.view, dynamicView]}>
           <KeyboardAwareScrollView bounces={bounces}>
             {children}
           </KeyboardAwareScrollView>
@@ -64,7 +61,7 @@ const Viewer = ({
       );
     } else {
       return (
-        <View style={buttonStyle}>
+        <View style={[styles.view, dynamicView]}>
           <KeyboardAwareScrollView bounces={bounces}>
             {children}
           </KeyboardAwareScrollView>
@@ -73,7 +70,18 @@ const Viewer = ({
     }
   }
 
-  return <View style={buttonStyle}>{children}</View>;
+  return <View style={[styles.view, dynamicView]}>{children}</View>;
 };
+
+const styles = StyleSheet.create({
+  view: {
+    flex: 1,
+  },
+  loaderView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default Viewer;
