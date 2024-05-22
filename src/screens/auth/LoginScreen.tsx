@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 import {Input, PrimaryButton, Viewer} from '../../components';
 import {strings} from '../../localization/localization';
-import {StyleSheet} from 'react-native';
+import {Alert, StyleSheet} from 'react-native';
 import {EyeIcon} from '../../assets';
 import {useToggle} from '../../hooks';
+import {emailValidator} from '../../utils/emailValidator';
 
 const LoginScreen = () => {
   const [showPassword, toggleShowPassword] = useToggle(false);
+  const [loading, setLoading] = useState(false);
 
   const [dataSource, setDataSource] = useState({
     name: '',
@@ -15,8 +17,36 @@ const LoginScreen = () => {
     password: '',
   });
 
+  const isValidData = () => {
+    const errors = [];
+
+    dataSource.name.length < 3 &&
+      errors.push(strings['Имя должно содержать как минимум 3 символа']);
+
+    dataSource.surname.length < 3 &&
+      errors.push(strings['Фамилия должна содержать как минимум 3 символа']);
+
+    !emailValidator(dataSource.login) &&
+      errors.push(strings['Некорректный адрес электронной почты']);
+
+    dataSource.password.length < 7 &&
+      errors.push(strings['Пароль должен содержать как минимум 6 символов']);
+
+    if (errors.length > 0) {
+      Alert.alert('', errors.join('\n'));
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleLogin = () => {
+    if (!isValidData()) return;
+    console.log('sdcmsldkcmlks');
+  };
+
   return (
-    <Viewer>
+    <Viewer scroll>
       <Input
         placeholder={strings['Введите имя']}
         viewStyle={styles.inputView}
@@ -47,7 +77,11 @@ const LoginScreen = () => {
           setDataSource(prev => ({...prev, password: text}))
         }
       />
-      <PrimaryButton style={styles.buttonView} title={strings.Авторизоваться} />
+      <PrimaryButton
+        style={styles.buttonView}
+        title={strings.Авторизоваться}
+        onPress={handleLogin}
+      />
     </Viewer>
   );
 };
