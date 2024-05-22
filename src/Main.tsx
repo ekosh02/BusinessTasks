@@ -1,12 +1,13 @@
-import { RootNavigation } from './navigations';
-import { DarkModeProvider } from './providers';
-
+import {RootNavigation} from './navigations';
+import {DarkModeProvider, UserProvider} from './providers';
 
 const Main = () => {
   return (
-    <DarkModeProvider>
-      <RootNavigation />
-    </DarkModeProvider>
+    <UserProvider>
+      <DarkModeProvider>
+        <RootNavigation />
+      </DarkModeProvider>
+    </UserProvider>
   );
 };
 

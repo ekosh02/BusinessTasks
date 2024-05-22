@@ -3,7 +3,8 @@ import {Animated, StyleSheet, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useTheme} from '../../hooks';
 import {typography} from '../../utils';
-import { RootNavigationType} from '../../@types';
+import {RootNavigationType} from '../../@types';
+import {useUser} from '../../providers';
 
 type SplasScreenType = NativeStackScreenProps<
   RootNavigationType,
@@ -15,6 +16,8 @@ const SplashScreen = ({navigation}: SplasScreenType) => {
 
   const {colors} = useTheme();
 
+  const {token} = useUser();
+
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -24,13 +27,16 @@ const SplashScreen = ({navigation}: SplasScreenType) => {
   }, [fadeAnim]);
 
   useEffect(() => {
-    setTimeout(() => navigation.replace('BottomNavigation'), 1500);
+    setTimeout(
+      () => navigation.replace(token ? 'BottomNavigation' : 'LoginScreen'),
+      1500,
+    );
   }, []);
 
   return (
     <View style={styles.view}>
       <Animated.Text
-        style={[styles.text, {opacity: fadeAnim, color: colors.font}]}>
+        style={[styles.text, {opacity: fadeAnim, color: colors.primary}]}>
         Business Tasks
       </Animated.Text>
     </View>
