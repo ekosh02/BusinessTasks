@@ -1,6 +1,6 @@
 import {Path, Svg} from 'react-native-svg';
 
-export const ProfileIcon = ({
+const ProfileIcon = ({
   active = false,
   activeColor = '#00f',
   passiveColor = '#666',

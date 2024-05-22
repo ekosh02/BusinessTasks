@@ -1,6 +1,6 @@
 import {Path, Svg} from 'react-native-svg';
 
-export const TaskIcon = ({
+const TaskIcon = ({
   active = false,
   activeColor = '#00f',
   passiveColor = '#666',
