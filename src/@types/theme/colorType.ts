@@ -6,6 +6,9 @@ type colorType = {
     font: string;
     border: string;
     placeholder: string;
+    red: string;
+    icon: string;
+    card: string,
     input: {
       border: string;
       background: string;

@@ -30,7 +30,7 @@ const BottomNavigation = () => {
             <TaskIcon
               active={focused}
               activeColor={colors.primary}
-              passiveColor={colors.border}
+              passiveColor={colors.icon}
             />
           ),
         },
@@ -43,7 +43,7 @@ const BottomNavigation = () => {
             <ProfileIcon
               active={focused}
               activeColor={colors.primary}
-              passiveColor={colors.border}
+              passiveColor={colors.icon}
             />
           ),
         },
@@ -57,6 +57,10 @@ const BottomNavigation = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
+        tabBarStyle: {
+          backgroundColor: colors.background,
+          borderColor: colors.border,
+        },
       }}>
       {routes.map((route, index) => (
         <Tab.Screen key={index} {...route} />

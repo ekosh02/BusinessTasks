@@ -1,10 +1,17 @@
-import {useEffect, useRef} from 'react';
-import {Animated, StyleSheet, View} from 'react-native';
+import {useEffect, useMemo, useRef} from 'react';
+import {
+  Animated,
+  StyleProp,
+  StyleSheet,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useTheme} from '../../hooks';
 import {getStorage, typography} from '../../utils';
 import {RootNavigationType, UserType} from '../../@types';
-import {useUser} from '../../providers';
+import {useDarkMode, useUser} from '../../providers';
 
 type SplasScreenType = NativeStackScreenProps<
   RootNavigationType,
@@ -13,39 +20,51 @@ type SplasScreenType = NativeStackScreenProps<
 
 const SplashScreen = ({navigation}: SplasScreenType) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const {colors} = useTheme();
-  const {setUser} = useUser();
+  const {colors, dark} = useTheme();
+  const {user, setUser} = useUser();
+  const {setIsDarkMode} = useDarkMode();
 
   const setting = async () => {
     const userData: UserType = await getStorage('userData');
-    if (userData) {
-      setUser(userData);
-      setTimeout(
-        () =>
-          navigation.navigate(userData ? 'BottomNavigation' : 'LoginScreen'),
-        1500,
-      );
-    }
+    const isDarkMode = await getStorage('isDarkMode');
+    setIsDarkMode(isDarkMode);
+    userData && setUser(userData);
+    setTimeout(
+      () => navigation.navigate(userData ? 'BottomNavigation' : 'AuthScreen'),
+      1500,
+    );
   };
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 700,
+      duration: 500,
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
 
   useEffect(() => {
     setting();
-  }, []);
+  }, [user?.uid]);
+
+  const view = useMemo<StyleProp<ViewStyle> | undefined>(
+    () => ({
+      backgroundColor: colors.background,
+    }),
+    [dark],
+  );
+
+  const text = useMemo<StyleProp<TextStyle> | undefined>(
+    () => ({
+      opacity: fadeAnim,
+      color: colors.primary,
+    }),
+    [dark, fadeAnim],
+  );
 
   return (
-    <View style={styles.view}>
-      <Animated.Text
-        style={[styles.text, {opacity: fadeAnim, color: colors.primary}]}>
-        Business Tasks
-      </Animated.Text>
+    <View style={[styles.view, view]}>
+      <Animated.Text style={[styles.text, text]}>Business Tasks</Animated.Text>
     </View>
   );
 };

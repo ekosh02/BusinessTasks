@@ -16,7 +16,7 @@ interface InputProps extends TextInputProps {
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   placeholder?: string;
-  onPressLeftIcon?: () => void
+  onPressLeftIcon?: () => void;
   onPressRightIcon?: () => void;
   viewStyle?: StyleProp<ViewStyle> | undefined;
 }
@@ -33,7 +33,7 @@ const Input = ({
   const {colors, dark} = useTheme();
   const [focus, setFocus] = useState(false);
 
-  const dynamicRowView = useMemo<StyleProp<TextStyle> | undefined>(
+  const rowView = useMemo<StyleProp<TextStyle> | undefined>(
     () => ({
       backgroundColor: colors.input.background,
       borderColor: focus ? colors.primary : colors.input.border,
@@ -41,14 +41,23 @@ const Input = ({
     [dark, focus],
   );
 
+  const textInputView = useMemo<StyleProp<TextStyle> | undefined>(
+    () => ({
+      color: colors.font,
+    }),
+    [dark],
+  );
+
   return (
-    <View style={[styles.rowView, dynamicRowView, viewStyle]}>
+    <View style={[styles.rowView, rowView, viewStyle]}>
       <TouchableOpacity onPress={onPressLeftIcon}>{leftIcon}</TouchableOpacity>
       <TextInput
-        style={styles.textInputView}
+        style={[styles.textInputView, textInputView]}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         placeholder={placeholder}
+        selectionColor={colors.primary}
+        placeholderTextColor={colors.placeholder}
         {...props}
       />
       <TouchableOpacity onPress={onPressRightIcon}>

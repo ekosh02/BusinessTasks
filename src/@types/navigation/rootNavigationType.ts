@@ -2,7 +2,8 @@ type RootNavigationType = {
     SplashScreen: undefined,
     BottomNavigation: undefined,
     TasksScreen: undefined,
-    LoginScreen: undefined,
+    RegistrationScreen: undefined,
+    AuthScreen: undefined,
 }
 
 export default RootNavigationType
