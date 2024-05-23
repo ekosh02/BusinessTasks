@@ -2,8 +2,8 @@ import {useEffect, useRef} from 'react';
 import {Animated, StyleSheet, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useTheme} from '../../hooks';
-import {typography} from '../../utils';
-import {RootNavigationType} from '../../@types';
+import {getStorage, typography} from '../../utils';
+import {RootNavigationType, UserType} from '../../@types';
 import {useUser} from '../../providers';
 
 type SplasScreenType = NativeStackScreenProps<
@@ -13,11 +13,20 @@ type SplasScreenType = NativeStackScreenProps<
 
 const SplashScreen = ({navigation}: SplasScreenType) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
-
   const {colors} = useTheme();
+  const {setUser} = useUser();
 
-  const {user} = useUser();
-
+  const setting = async () => {
+    const userData: UserType = await getStorage('userData');
+    if (userData) {
+      setUser(userData);
+      setTimeout(
+        () =>
+          navigation.navigate(userData ? 'BottomNavigation' : 'LoginScreen'),
+        1500,
+      );
+    }
+  };
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -28,10 +37,7 @@ const SplashScreen = ({navigation}: SplasScreenType) => {
   }, [fadeAnim]);
 
   useEffect(() => {
-    setTimeout(
-      () => navigation.replace(user?.uid ? 'BottomNavigation' : 'LoginScreen'),
-      1500,
-    );
+    setting();
   }, []);
 
   return (
