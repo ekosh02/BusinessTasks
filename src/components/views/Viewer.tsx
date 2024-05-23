@@ -7,17 +7,22 @@ import {
   StyleProp,
   ViewStyle,
   StyleSheet,
+  ViewProps,
 } from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {
+  KeyboardAwareScrollView,
+  KeyboardAwareScrollViewProps,
+} from 'react-native-keyboard-aware-scroll-view';
 import {useTheme} from '../../hooks';
 
-type ViewerProps = {
+interface ViewerProps extends ViewProps, KeyboardAwareScrollViewProps {
   children?: ReactNode;
   loading?: boolean;
   scroll?: boolean;
   safeArea?: boolean;
   bounces?: boolean;
-};
+  style?: StyleProp<ViewStyle> | undefined;
+}
 
 const Viewer = ({
   children,
@@ -25,6 +30,8 @@ const Viewer = ({
   scroll = false,
   safeArea = false,
   bounces = false,
+  style,
+  ...props
 }: ViewerProps) => {
   const {colors, dark} = useTheme();
 
@@ -44,7 +51,7 @@ const Viewer = ({
 
   if (loading) {
     return (
-      <View style={[styles.loaderView, dynamicLoaderView]}>
+      <View style={[styles.loaderView, dynamicLoaderView, style]} {...props}>
         <ActivityIndicator color={colors.primary} size={'large'} />
       </View>
     );
@@ -53,7 +60,7 @@ const Viewer = ({
   if (scroll) {
     if (safeArea && Platform.OS === 'ios') {
       return (
-        <SafeAreaView style={[styles.view, dynamicView]}>
+        <SafeAreaView style={[styles.view, dynamicView, style]} {...props}>
           <KeyboardAwareScrollView bounces={bounces}>
             {children}
           </KeyboardAwareScrollView>
@@ -61,7 +68,7 @@ const Viewer = ({
       );
     } else {
       return (
-        <View style={[styles.view, dynamicView]}>
+        <View style={[styles.view, dynamicView, style]} {...props}>
           <KeyboardAwareScrollView bounces={bounces}>
             {children}
           </KeyboardAwareScrollView>
@@ -70,7 +77,11 @@ const Viewer = ({
     }
   }
 
-  return <View style={[styles.view, dynamicView]}>{children}</View>;
+  return (
+    <View style={[styles.view, dynamicView, style]} {...props}>
+      {children}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

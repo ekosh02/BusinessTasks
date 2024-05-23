@@ -7,6 +7,7 @@ const LightTheme: colorType = {
     background: '#fff',
     font: '#000',
     border: '#c4c4c4',
+    placeholder: '#8897A5',
     input: {
       border: '#e8e8e8',
       background: '#f5f5f5',
@@ -21,6 +22,7 @@ const DarkTheme: colorType = {
     background: '#000',
     font: '#fff',
     border: '#696969',
+    placeholder: '#c7c7c7',
     input: {
       border: '#696969',
       background: '#363636',

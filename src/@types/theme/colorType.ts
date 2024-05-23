@@ -5,6 +5,7 @@ type colorType = {
     background: string;
     font: string;
     border: string;
+    placeholder: string;
     input: {
       border: string;
       background: string;
