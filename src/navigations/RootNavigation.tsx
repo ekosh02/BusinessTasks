@@ -27,6 +27,19 @@ const RootNavigation = () => {
 
   const {colors, dark} = useTheme();
 
+  const headerCommonStyle = useMemo<StackNavigationOptions>(
+    () => ({
+      headerStyle: {
+        backgroundColor: colors.background,
+        borderBottomColor: colors.border,
+        borderBottomWidth: 0.5,
+        shadowColor: colors.background,
+      },
+      headerTintColor: colors.font.primary,
+    }),
+    [dark],
+  );
+
   const publicRoutes = useMemo<RouteType[]>(
     () => [
       {
@@ -37,15 +50,15 @@ const RootNavigation = () => {
       {
         name: 'RegistrationScreen',
         component: RegistrationScreen,
-        options: {headerTitle: strings.Регистрация},
+        options: {headerTitle: strings.Регистрация, ...headerCommonStyle},
       },
       {
         name: 'AuthScreen',
         component: AuthScreen,
         options: {
-          headerShown: true,
-          headerLeft: () => null,
           headerTitle: strings.Авторизоваться,
+          ...headerCommonStyle,
+          headerLeft: () => null,
         },
       },
     ],
@@ -67,7 +80,11 @@ const RootNavigation = () => {
       {
         name: 'BoardDetailScreen',
         component: BoardDetailScreen,
-        options: {headerTitle: strings['Доска']},
+        options: {
+          headerTitle: strings['Доска'],
+          headerShown: true,
+          ...headerCommonStyle,
+        },
       },
     ],
     [],
