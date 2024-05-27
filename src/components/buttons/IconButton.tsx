@@ -4,39 +4,31 @@ import {
   GestureResponderEvent,
   StyleProp,
   StyleSheet,
-  Text,
-  TextStyle,
   TouchableOpacity,
   TouchableOpacityProps,
   ViewStyle,
 } from 'react-native';
 import {useTheme} from '../../hooks';
-import {useMemo} from 'react';
-import {typography} from '../../utils';
 
-interface TextButtonProps extends TouchableOpacityProps {
-  title?: string;
+interface IconButtonProps extends TouchableOpacityProps {
+  icon?: any;
   onPress?: ((event: GestureResponderEvent) => void) | undefined;
   style?: StyleProp<ViewStyle> | undefined;
+  color?: string;
+  loadingSize?: number,
+  loadingColor?: string,
   loading?: boolean;
-  textStyle?: StyleProp<TextStyle> | undefined;
 }
 
-const TextButton = ({
-  title = 'Press',
+const IconButton = ({
+  icon: Icon,
   style,
   loading = false,
-  textStyle,
+  loadingSize,
+  loadingColor,
   ...props
-}: TextButtonProps) => {
-  const {colors, dark} = useTheme();
-
-  const text = useMemo<StyleProp<TextStyle> | undefined>(
-    () => ({
-      color: colors.font.primary,
-    }),
-    [dark],
-  );
+}: IconButtonProps) => {
+  const {colors} = useTheme();
 
   return (
     <TouchableOpacity
@@ -44,9 +36,12 @@ const TextButton = ({
       disabled={loading}
       {...props}>
       {loading ? (
-        <ActivityIndicator color={'#fff'} />
+        <ActivityIndicator
+          color={loadingColor ? loadingColor : colors.icon}
+          size={loadingSize}
+        />
       ) : (
-        <Text style={[styles.text, text, textStyle]}>{title}</Text>
+        Icon && Icon
       )}
     </TouchableOpacity>
   );
@@ -56,12 +51,8 @@ const styles = StyleSheet.create({
   buttonView: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 48,
-    marginHorizontal: 16,
-  },
-  text: {
-    ...typography('rounded'),
+    // padding: 6,
   },
 });
 
-export default TextButton;
+export default IconButton;

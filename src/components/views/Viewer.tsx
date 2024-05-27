@@ -8,6 +8,7 @@ import {
   ViewStyle,
   StyleSheet,
   ViewProps,
+  Text,
 } from 'react-native';
 import {
   KeyboardAwareScrollView,
@@ -21,6 +22,7 @@ interface ViewerProps extends ViewProps, KeyboardAwareScrollViewProps {
   scroll?: boolean;
   safeArea?: boolean;
   bounces?: boolean;
+  error?: any;
   style?: StyleProp<ViewStyle> | undefined;
 }
 
@@ -30,28 +32,30 @@ const Viewer = ({
   scroll = false,
   safeArea = false,
   bounces = false,
+  error,
   style,
   ...props
 }: ViewerProps) => {
   const {colors, dark} = useTheme();
 
-  const dynamicView = useMemo<StyleProp<ViewStyle> | undefined>(
+  const view = useMemo<StyleProp<ViewStyle> | undefined>(
     () => ({
       backgroundColor: colors.background,
     }),
     [dark],
   );
 
-  const dynamicLoaderView = useMemo<StyleProp<ViewStyle> | undefined>(
-    () => ({
-      backgroundColor: colors.background,
-    }),
-    [dark],
-  );
+  if (error) {
+    return (
+      <View style={[styles.loaderView, view, style]} {...props}>
+        <Text>Error</Text>
+      </View>
+    );
+  }
 
   if (loading) {
     return (
-      <View style={[styles.loaderView, dynamicLoaderView, style]} {...props}>
+      <View style={[styles.loaderView, view, style]} {...props}>
         <ActivityIndicator color={colors.primary} size={'large'} />
       </View>
     );
@@ -60,7 +64,7 @@ const Viewer = ({
   if (scroll) {
     if (safeArea && Platform.OS === 'ios') {
       return (
-        <SafeAreaView style={[styles.view, dynamicView, style]} {...props}>
+        <SafeAreaView style={[styles.view, view, style]} {...props}>
           <KeyboardAwareScrollView bounces={bounces}>
             {children}
           </KeyboardAwareScrollView>
@@ -68,7 +72,7 @@ const Viewer = ({
       );
     } else {
       return (
-        <View style={[styles.view, dynamicView, style]} {...props}>
+        <View style={[styles.view, view, style]} {...props}>
           <KeyboardAwareScrollView bounces={bounces}>
             {children}
           </KeyboardAwareScrollView>
@@ -78,7 +82,7 @@ const Viewer = ({
   }
 
   return (
-    <View style={[styles.view, dynamicView, style]} {...props}>
+    <View style={[styles.view, view, style]} {...props}>
       {children}
     </View>
   );

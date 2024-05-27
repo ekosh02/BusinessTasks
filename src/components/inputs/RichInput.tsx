@@ -12,24 +12,22 @@ import {
 } from 'react-native';
 import {useTheme} from '../../hooks';
 
-interface InputProps extends TextInputProps {
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
+interface RichInputProps extends TextInputProps {
   placeholder?: string;
+  height?: number;
   onPressLeftIcon?: () => void;
   onPressRightIcon?: () => void;
   viewStyle?: StyleProp<ViewStyle> | undefined;
 }
 
-const Input = ({
-  leftIcon = undefined,
-  rightIcon = undefined,
+const RichInput = ({
   placeholder = 'Input',
+  height = 200,
   onPressLeftIcon,
   onPressRightIcon,
   viewStyle,
   ...props
-}: InputProps) => {
+}: RichInputProps) => {
   const {colors, dark} = useTheme();
   const [focus, setFocus] = useState(false);
 
@@ -37,6 +35,7 @@ const Input = ({
     () => ({
       backgroundColor: colors.input.background,
       borderColor: focus ? colors.primary : colors.input.border,
+      height: height,
     }),
     [dark, focus],
   );
@@ -45,42 +44,39 @@ const Input = ({
     () => ({
       color: colors.font.primary,
     }),
-    [dark],
+    [dark, height],
   );
 
   return (
     <View style={[styles.rowView, rowView, viewStyle]}>
-      <TouchableOpacity onPress={onPressLeftIcon}>{leftIcon}</TouchableOpacity>
       <TextInput
         style={[styles.textInputView, textInputView]}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
+        textAlignVertical="top"
         placeholder={placeholder}
+        multiline
         selectionColor={colors.primary}
         placeholderTextColor={colors.placeholder}
         {...props}
       />
-      <TouchableOpacity onPress={onPressRightIcon}>
-        {rightIcon}
-      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   rowView: {
-    height: 48,
+    paddingTop: 4,
     marginHorizontal: 16,
     borderRadius: 24,
     borderWidth: 1,
     flexDirection: 'row',
-    alignItems: 'center',
     paddingHorizontal: 13,
   },
   textInputView: {
-    paddingHorizontal: 8,
     flex: 1,
+    paddingHorizontal: 8,
   },
 });
 
-export default Input;
+export default RichInput;

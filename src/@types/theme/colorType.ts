@@ -3,7 +3,10 @@ type colorType = {
   colors: {
     primary: string;
     background: string;
-    font: string;
+    font: {
+      primary: string,
+      gray: string,
+    }
     border: string;
     placeholder: string;
     red: string;

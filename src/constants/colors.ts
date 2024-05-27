@@ -5,7 +5,10 @@ const LightTheme: colorType = {
   colors: {
     primary: '#0088cc',
     background: '#fff',
-    font: '#000',
+    font: {
+      primary: '#000',
+      gray: '#808080',
+    },
     border: '#c4c4c4',
     placeholder: '#8897A5',
     red: '#FA7364',
@@ -23,7 +26,10 @@ const DarkTheme: colorType = {
   colors: {
     primary: '#0088cc',
     background: '#1f1f1f',
-    font: '#fff',
+    font: {
+      primary: '#fff',
+      gray: '#AAAEB3',
+    },
     border: '#696969',
     placeholder: '#c7c7c7',
     red: '#FA7364',
