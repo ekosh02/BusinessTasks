@@ -12,21 +12,22 @@ import AuthScreen from '../screens/auth/AuthScreen';
 import {useUser} from '../providers';
 import {useTheme} from '../hooks';
 import {strings} from '../localization/localization';
+import BoardDetailScreen from '../screens/board/BoardDetailScreen';
 
 const Stack = createStackNavigator<RootNavigationType>();
 
 type RouteType = {
   name: keyof RootNavigationType;
   component: ComponentType<any>;
-  options: StackNavigationOptions;
+  options?: StackNavigationOptions;
 };
 
 const RootNavigation = () => {
   const {user} = useUser();
 
-  const {colors} = useTheme();
+  const {colors, dark} = useTheme();
 
-  const privateRoutes = useMemo<RouteType[]>(
+  const publicRoutes = useMemo<RouteType[]>(
     () => [
       {
         name: 'SplashScreen',
@@ -36,7 +37,7 @@ const RootNavigation = () => {
       {
         name: 'RegistrationScreen',
         component: RegistrationScreen,
-        options: {headerShown: true, headerTitle: strings.Регистрация},
+        options: {headerTitle: strings.Регистрация},
       },
       {
         name: 'AuthScreen',
@@ -51,7 +52,7 @@ const RootNavigation = () => {
     [strings.getLanguage()],
   );
 
-  const publicRoutes = useMemo<RouteType[]>(
+  const privateRoutes = useMemo<RouteType[]>(
     () => [
       {
         name: 'SplashScreen',
@@ -63,26 +64,38 @@ const RootNavigation = () => {
         component: BottomNavigation,
         options: {headerShown: false},
       },
+      {
+        name: 'BoardDetailScreen',
+        component: BoardDetailScreen,
+        options: {headerTitle: strings['Доска']},
+      },
     ],
     [],
+  );
+
+  const routes = useMemo(
+    () => (user?.uid ? privateRoutes : publicRoutes),
+    [user?.uid],
+  );
+
+  const screenOptions: StackNavigationOptions = useMemo(
+    () => ({
+      headerTintColor: colors.font.primary,
+      headerStyle: {
+        backgroundColor: colors.background,
+      },
+    }),
+    [dark],
   );
 
   return (
     <NavigationContainer>
       <Stack.Navigator
-        screenOptions={{
-          headerTintColor: colors.font,
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-        }}>
-        {user?.uid
-          ? publicRoutes.map((route, index) => (
-              <Stack.Screen key={index} {...route} />
-            ))
-          : privateRoutes.map((route, index) => (
-              <Stack.Screen key={index} {...route} />
-            ))}
+        screenOptions={screenOptions}
+        initialRouteName="SplashScreen">
+        {routes.map(route => (
+          <Stack.Screen key={route.name} {...route} />
+        ))}
       </Stack.Navigator>
     </NavigationContainer>
   );

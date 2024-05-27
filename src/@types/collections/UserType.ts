@@ -1,9 +1,16 @@
-type UserType = {
-  uid: string;
-  name: string;
-  surname: string;
-  accCreated: number;
-  email: string;
+type UserPublicType = {
+  uid: string | undefined;
+  name: string | undefined;
+  surname: string | undefined;
+  email: string | undefined;
 };
 
-export default UserType;
+type UserType = {
+  uid: string | undefined;
+  name: string | undefined;
+  surname: string | undefined;
+  accCreated: number | undefined;
+  email: string | undefined;
+};
+
+export type {UserType, UserPublicType};

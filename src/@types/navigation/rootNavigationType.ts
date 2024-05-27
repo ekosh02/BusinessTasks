@@ -1,9 +1,14 @@
-type RootNavigationType = {
-    SplashScreen: undefined,
-    BottomNavigation: undefined,
-    TasksScreen: undefined,
-    RegistrationScreen: undefined,
-    AuthScreen: undefined,
-}
+import {BoardType} from '../collections/BoardType';
 
-export default RootNavigationType
+type RootNavigationType = {
+  SplashScreen: undefined;
+  BottomNavigation: undefined;
+  TasksScreen: undefined;
+  RegistrationScreen: undefined;
+  AuthScreen: undefined;
+  BoardDetailScreen?: {boardData?: BoardType};
+  BoardTabScreen: undefined;
+  ProfileTabScreen: undefined
+};
+
+export default RootNavigationType;

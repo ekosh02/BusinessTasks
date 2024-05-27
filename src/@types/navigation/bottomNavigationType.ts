@@ -1,5 +1,5 @@
 type BottomNavigationType = {
-  TasksTabScreen: undefined;
+  BoardTabScreen: undefined;
   ProfileTabScreen: undefined;
 };
 

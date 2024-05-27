@@ -16,8 +16,15 @@ import {useTheme, useToggle} from '../../hooks';
 import TextButton from '../../components/buttons/TextButton';
 import {strings} from '../../localization/localization';
 import {ArrowMiniRightIcon} from '../../assets';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootNavigationType} from '../../@types';
 
-const ProfileTabScreen = () => {
+type ProfileTabScreenType = NativeStackScreenProps<
+  RootNavigationType,
+  'ProfileTabScreen'
+>;
+
+const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
   const {user, setUser} = useUser();
   const {colors, dark} = useTheme();
   const [languageVisible, toggleLanguageVisible] = useToggle(false);
@@ -67,7 +74,7 @@ const ProfileTabScreen = () => {
   );
 
   const profileText = useMemo<StyleProp<TextStyle> | undefined>(
-    () => ({color: colors.font}),
+    () => ({color: colors.font.primary}),
     [dark],
   );
 
@@ -82,7 +89,7 @@ const ProfileTabScreen = () => {
   );
 
   const sectionText = useMemo<StyleProp<TextStyle> | undefined>(
-    () => ({color: colors.font}),
+    () => ({color: colors.font.primary}),
     [dark],
   );
 
