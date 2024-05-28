@@ -62,7 +62,7 @@ const RootNavigation = () => {
         },
       },
     ],
-    [strings.getLanguage()],
+    [strings.getLanguage(), dark],
   );
 
   const privateRoutes = useMemo<RouteType[]>(
@@ -87,7 +87,7 @@ const RootNavigation = () => {
         },
       },
     ],
-    [],
+    [strings.getLanguage(), dark],
   );
 
   const routes = useMemo(

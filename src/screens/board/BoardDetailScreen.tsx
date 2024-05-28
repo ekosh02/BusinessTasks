@@ -30,7 +30,7 @@ import {CheckBoxesType, RootNavigationType} from '../../@types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useUser} from '../../providers';
 import {UserPublicType, UserType} from '../../@types/collections/UserType';
-import {typography} from '../../utils';
+import {convertUnixToDate, typography} from '../../utils';
 import {useTheme, useToggle} from '../../hooks';
 import {PlusIcon, RemoveIcon} from '../../assets';
 import DatePicker from 'react-native-date-picker';
@@ -105,14 +105,8 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
       .finally(() => setUsersLoading(false));
   };
 
-  const convertUnixToDate = (unixTimestamp: number) =>
-    new Date(unixTimestamp).toLocaleDateString('ru');
-
   const handleConfirmDeadline = (date: Date) => setExpiresAt(date.getTime());
 
-
-  // console.log('moda', dateModalVisible);
-  
   const handleCreateCheckbox = () => {
     setCheckboxes([...checkboxes, {name: '', status: false}]);
   };
@@ -187,9 +181,9 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
   const dateButtonView = useMemo<StyleProp<TextStyle>>(
     () => ({
       backgroundColor: colors.input.background,
-      borderColor: colors.input.border,
+      borderColor: dateModalVisible ? colors.primary : colors.input.border,
     }),
-    [dark],
+    [dark, dateModalVisible],
   );
 
   const iconColor = useMemo(() => colors.icon, [dark]);
