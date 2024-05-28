@@ -16,6 +16,7 @@ type BoardFirestoreType = {
 };
 
 type BoardType = {
+  id: string,
   name: string;
   description: string;
   createdAt: number;

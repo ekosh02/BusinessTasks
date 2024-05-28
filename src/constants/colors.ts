@@ -4,6 +4,7 @@ const LightTheme: colorType = {
   dark: false,
   colors: {
     primary: '#0088cc',
+    green: '#4BB34B',
     background: '#fff',
     font: {
       primary: '#000',
@@ -25,6 +26,7 @@ const DarkTheme: colorType = {
   dark: true,
   colors: {
     primary: '#0088cc',
+    green: '#4BB34B',
     background: '#1f1f1f',
     font: {
       primary: '#fff',

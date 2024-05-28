@@ -14,7 +14,7 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import {IconButton, Viewer} from '../../components';
+import {IconButton, PrimaryButton, ProgressBar, Viewer} from '../../components';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore'; // Corrected import
@@ -22,10 +22,10 @@ import {FirestoreCollection} from '../../constants';
 import {BoardType, RootNavigationType} from '../../@types';
 import {width} from '../../utils/screenDimensions';
 import {useTheme} from '../../hooks';
-import {convertUnixToDate, typography} from '../../utils';
+import {convertUnixToDate, dateDelay, typography} from '../../utils';
 import {strings} from '../../localization/localization';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {PlusIcon, TaskIcon} from '../../assets';
+import {PlusIcon, RemoveIcon} from '../../assets';
 
 type BoardsFirestoreType =
   FirebaseFirestoreTypes.QuerySnapshot<BoardType> | null;
@@ -64,6 +64,9 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
     navigation.navigate('BoardDetailScreen');
   };
 
+  const handleBoard = (item: BoardFirestoreType) =>
+    navigation.navigate('BoardDetailScreen', {boardData: item.data()});
+
   useEffect(() => {
     getBoards();
   }, []);
@@ -71,6 +74,7 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
   useEffect(() => {
     if (reload) {
       getBoards();
+      navigation.setParams({reload: false});
     }
   }, [reload]);
 
@@ -81,6 +85,11 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
 
   const textView = useMemo<StyleProp<TextStyle>>(
     () => ({color: colors.font.primary}),
+    [dark],
+  );
+
+  const removeButtonView = useMemo<StyleProp<TextStyle>>(
+    () => ({backgroundColor: `${colors.red}55`}),
     [dark],
   );
 
@@ -101,8 +110,22 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
   const renderItem = useCallback(
     ({item}: {item: BoardFirestoreType}) => {
       const value = item.data();
+
+      const trueCount = value.checkboxes.filter(
+        checkbox => checkbox.status,
+      ).length;
+      const totalCount = value.checkboxes.length;
+      const percentage = (trueCount / totalCount) * 100;
+      const percentageToFix = percentage.toFixed(2);
+
+      const dateTextColor = dateDelay(value.expiresAt as number)
+        ? colors.red
+        : colors.placeholder;
+
       return (
-        <TouchableOpacity style={[styles.itemView, itemView]}>
+        <TouchableOpacity
+          style={[styles.itemView, itemView]}
+          onPress={() => handleBoard(item)}>
           <Text numberOfLines={2} style={[styles.headings, textView]}>
             {value.name}
           </Text>
@@ -115,18 +138,34 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
           <Text style={[styles.content, textView]}>
             {strings['Кол-во участников']}: {value.members.length}
           </Text>
-          <Text style={[styles.content, textView]}>
+          <Text style={[styles.content, {color: dateTextColor}]}>
             {strings.Дата}: {convertUnixToDate(value?.expiresAt)}
           </Text>
+          <ProgressBar percentage={parseFloat(percentageToFix)} />
         </TouchableOpacity>
       );
     },
     [dark],
   );
 
+  const keyExtractor = useCallback(
+    (item: BoardFirestoreType) => item.data().id,
+    [boardsLoading],
+  );
+
   return (
     <Viewer loading={boardsLoading} error={boardsError}>
-      <FlatList data={boardsData?.docs} renderItem={renderItem} />
+      <FlatList
+        data={boardsData?.docs}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+      />
+      {boardsData?.docs?.length ? (
+        <IconButton
+          icon={<RemoveIcon color='#fff' size='34'/>}
+          style={[styles.removeButtonView, removeButtonView]}
+        />
+      ) : null}
     </Viewer>
   );
 };
@@ -149,6 +188,14 @@ const styles = StyleSheet.create({
   },
   rightIconView: {
     padding: 10,
+  },
+  removeButtonView: {
+    position: 'absolute',
+    right: 16,
+    bottom: 16,
+    height: 50,
+    width: 50,
+    borderRadius: 25,
   },
 });
 

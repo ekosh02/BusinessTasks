@@ -5,6 +5,7 @@ import {
   StyleProp,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
   TouchableOpacityProps,
   ViewStyle,
@@ -17,12 +18,14 @@ interface PrimaryButtonProps extends TouchableOpacityProps {
   title?: string;
   onPress?: ((event: GestureResponderEvent) => void) | undefined;
   style?: StyleProp<ViewStyle> | undefined;
+  testStyle?: StyleProp<TextStyle> | undefined;
   loading?: boolean;
 }
 
 const PrimaryButton = ({
   title = 'Press',
   style,
+  testStyle,
   loading = false,
   ...props
 }: PrimaryButtonProps) => {
@@ -43,7 +46,7 @@ const PrimaryButton = ({
       {loading ? (
         <ActivityIndicator color={'#fff'} />
       ) : (
-        <Text style={styles.text}>{title}</Text>
+        <Text style={[styles.text, testStyle]}>{title}</Text>
       )}
     </TouchableOpacity>
   );

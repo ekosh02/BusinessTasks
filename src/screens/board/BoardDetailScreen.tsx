@@ -13,6 +13,7 @@ import {
   IconButton,
   Input,
   PrimaryButton,
+  ProgressBar,
   RichInput,
   Viewer,
 } from '../../components';
@@ -27,14 +28,18 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import {FirestoreCollection} from '../../constants';
 import {CheckBoxesType, RootNavigationType} from '../../@types';
-import {NativeStackNavigationOptions, NativeStackScreenProps} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationOptions,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import {useUser} from '../../providers';
 import {UserPublicType, UserType} from '../../@types/collections/UserType';
-import {convertUnixToDate, typography} from '../../utils';
+import {convertUnixToDate, dateDelay, typography} from '../../utils';
 import {useTheme, useToggle} from '../../hooks';
-import {PlusIcon, RemoveIcon} from '../../assets';
+import {CheckIcon, PlusIcon, RemoveIcon} from '../../assets';
 import DatePicker from 'react-native-date-picker';
-import { StackNavigationOptions } from '@react-navigation/stack';
+import {StackNavigationOptions} from '@react-navigation/stack';
+import {width} from '../../utils/screenDimensions';
 
 const usersLoadingData = Array.from({length: 10}, (_, index) => ({id: index}));
 
@@ -49,47 +54,75 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
   const {colors, dark} = useTheme();
   const {user} = useUser();
 
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [checkboxes, setCheckboxes] = useState<CheckBoxesType[]>([]);
+  const [name, setName] = useState(boardData?.name ? boardData.name : '');
+  const [description, setDescription] = useState(
+    boardData?.description ? boardData.description : '',
+  );
+  const [checkboxes, setCheckboxes] = useState<CheckBoxesType[]>(
+    boardData?.checkboxes ? boardData.checkboxes : [],
+  );
 
   const [dateModalVisible, toggleDateModalVisible] = useToggle(false);
-  const [expiresAt, setExpiresAt] = useState<number | null>(null);
 
-  const [selectedMembers, setSelectedMembers] = useState<UserPublicType[]>([]);
+  const [expiresAt, setExpiresAt] = useState<number | null>(
+    boardData?.expiresAt ? boardData.expiresAt : null,
+  );
+
+  const [selectedMembers, setSelectedMembers] = useState<UserPublicType[]>(
+    boardData?.members ? boardData.members : [],
+  );
   const [createLoading, setCreateLoading] = useState(false);
 
   const [usersData, setUsersData] = useState<UserType[] | []>([]);
   const [usersLoading, setUsersLoading] = useState(true);
 
-  const handleCreateBoard = async () => {
+  const handleCreateOrUpdateBoard = async () => {
     const userData: UserPublicType = {
       uid: user?.uid,
       name: user?.name,
       surname: user?.surname,
       email: user?.email,
     };
+
     setCreateLoading(true);
-    await firestore()
-      .collection(FirestoreCollection.boards)
-      .add({
-        name: name,
-        description: description,
-        createdAt: Date.now(),
-        creater: userData,
-        members: selectedMembers,
-        checkboxes: checkboxes,
-        expiresAt: expiresAt,
-      })
-      .then(() => {
-        Alert.alert(strings.Успешно);
-        navigation.navigate('BoardTabScreen', {reload: true})
-      })
-      .catch(error => {
-        console.error('error', error);
-        Alert.alert(strings['Какая-то ошибка']);
-      })
-      .finally(() => setCreateLoading(false));
+
+    try {
+      if (boardData) {
+        await firestore()
+          .collection(FirestoreCollection.boards)
+          .doc(boardData.id)
+          .update({
+            name: name,
+            description: description,
+            checkboxes: checkboxes,
+            members: selectedMembers,
+            expiresAt: expiresAt,
+          });
+        Alert.alert(strings.Успешно, strings['Доска обновлена']);
+      } else {
+        const newBoardRef = firestore()
+          .collection(FirestoreCollection.boards)
+          .doc();
+        await newBoardRef.set({
+          id: newBoardRef.id,
+          name: name,
+          description: description,
+          createdAt: Date.now(),
+          creater: userData,
+          members: selectedMembers,
+          checkboxes: checkboxes,
+          expiresAt: expiresAt,
+        });
+        Alert.alert(strings.Успешно, strings['Доска создана']);
+      }
+
+      navigation.navigate('BoardTabScreen', {reload: true});
+    } catch (error) {
+      console.error('error', error);
+      Alert.alert(strings['Какая-то ошибка']);
+    } finally {
+      setCreateLoading(false);
+    }
   };
 
   const getUsers = async () => {
@@ -144,6 +177,12 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
       setSelectedMembers(prevMembers => [...prevMembers, userData]);
     }
   };
+  const handleCheckBox = (index: number) => {
+    const newCheckboxes = checkboxes.map((checkbox, i) =>
+      i === index ? {...checkbox, status: !checkbox.status} : checkbox,
+    );
+    setCheckboxes(newCheckboxes);
+  };
 
   useEffect(() => {
     getUsers();
@@ -153,7 +192,7 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
     () =>
       navigation.setOptions({
         headerTitle: boardData ? strings.Доска : strings['Создать доску'],
-        ...headerCommonStyle
+        ...headerCommonStyle,
       }),
     [],
   );
@@ -176,11 +215,11 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
     [dark],
   );
 
-  const placeholderColor = useMemo<StyleProp<TextStyle>>(
+  const dateTextColor = useMemo<StyleProp<TextStyle>>(
     () => ({
-      color: colors.placeholder,
+      color: dateDelay(expiresAt as number) ? colors.red : colors.placeholder,
     }),
-    [dark],
+    [dark, expiresAt],
   );
 
   const userItemLoadingView = useMemo<StyleProp<ViewStyle>>(
@@ -193,6 +232,11 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
     [dark],
   );
 
+  const iconCheckedBorderColor = useMemo<StyleProp<ViewStyle>>(
+    () => ({borderColor: colors.green}),
+    [],
+  );
+
   const dateButtonView = useMemo<StyleProp<TextStyle>>(
     () => ({
       backgroundColor: colors.input.background,
@@ -202,6 +246,16 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
   );
 
   const iconColor = useMemo(() => colors.icon, [dark]);
+
+  const calculateStatusPercentage = () => {
+    const trueCount = checkboxes.filter(checkbox => checkbox.status).length;
+    const totalCount = checkboxes.length;
+    const percentage = (trueCount / totalCount) * 100;
+    if (isNaN(percentage)) {
+      return 0;
+    }
+    return percentage;
+  };
 
   const renderUserItem = useCallback(
     ({item}: {item: UserType}) => {
@@ -250,7 +304,7 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
       <TouchableOpacity
         style={[styles.dateButtonView, dateButtonView]}
         onPress={toggleDateModalVisible}>
-        <Text style={placeholderColor}>
+        <Text style={dateTextColor}>
           {expiresAt
             ? convertUnixToDate(expiresAt)
             : strings['Выберите дедлайн']}
@@ -265,10 +319,22 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
           onPress={handleCreateCheckbox}
         />
       </View>
-      {checkboxes.map((_, index) => (
+
+      {checkboxes.map((value, index) => (
         <View key={index} style={styles.checkBoxView}>
           <Input
             viewStyle={styles.checkBoxInput}
+            value={value.name}
+            leftIcon={
+              <View
+                style={[
+                  styles.checkIconView,
+                  value.status ? iconCheckedBorderColor : iconBorderColor,
+                ]}>
+                <CheckIcon color={value.status ? colors.green : iconColor} />
+              </View>
+            }
+            onPressLeftIcon={() => handleCheckBox(index)}
             placeholder={`${strings.чекбокс} ${index + 1}`}
             rightIcon={<RemoveIcon color={iconColor} />}
             onPressRightIcon={() => handleDeleteCheckbox(index)}
@@ -276,6 +342,11 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
           />
         </View>
       ))}
+
+      <ProgressBar
+        percentage={calculateStatusPercentage()}
+        progressBarStyle={styles.progressBarView}
+      />
 
       <Text style={[styles.title, fontColor]}>{strings['Участники']}:</Text>
       <View style={styles.horizontList}>
@@ -300,9 +371,9 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
 
       <PrimaryButton
         style={styles.createButtonView}
-        title={strings.Создать}
+        title={boardData ? strings.Изменить : strings.Создать}
         loading={createLoading}
-        onPress={handleCreateBoard}
+        onPress={handleCreateOrUpdateBoard}
       />
       <DatePicker
         date={expiresAt ? new Date(expiresAt) : new Date()}
@@ -390,7 +461,6 @@ const styles = StyleSheet.create({
   checkBoxInput: {
     marginTop: 10,
     borderRadius: 6,
-    // height: 42,
   },
   dateButtonView: {
     marginTop: 16,
@@ -402,6 +472,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 22,
   },
+  progressBarView: {marginHorizontal: 16, marginTop: 16},
 });
 
 export default BoardDetailScreen;

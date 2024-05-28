@@ -2,6 +2,7 @@ type colorType = {
   dark: boolean;
   colors: {
     primary: string;
+    green: string,
     background: string;
     font: {
       primary: string,
