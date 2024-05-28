@@ -30,7 +30,7 @@ const SplashScreen = ({navigation}: SplasScreenType) => {
     setIsDarkMode(isDarkMode);
     userData && setUser(userData);
     setTimeout(
-      () => navigation.navigate(userData ? 'BottomNavigation' : 'AuthScreen'),
+      () => navigation.replace(userData ? 'BottomNavigation' : 'AuthScreen'),
       1500,
     );
   };

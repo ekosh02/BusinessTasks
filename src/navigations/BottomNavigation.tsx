@@ -29,7 +29,19 @@ type BottomNavigationProps = NativeStackScreenProps<
 const BottomNavigation = ({navigation}: BottomNavigationProps) => {
   const {colors, dark} = useTheme();
 
-  const handleCreateBoard = () => navigation.navigate('BoardDetailScreen');
+  const headerCommonStyle = useMemo<BottomTabNavigationOptions>(
+    () => ({
+      headerShown: true,
+      headerStyle: {
+        backgroundColor: colors.background,
+        borderBottomColor: colors.border,
+        borderBottomWidth: 0.5,
+        shadowColor: colors.background,
+      },
+      headerTintColor: colors.font.primary,
+    }),
+    [dark],
+  );
 
   const routes = useMemo<RouteType[]>(
     () => [
@@ -37,23 +49,8 @@ const BottomNavigation = ({navigation}: BottomNavigationProps) => {
         name: 'BoardTabScreen',
         component: BoardTabScreen,
         options: {
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: colors.background,
-            borderBottomColor: colors.border,
-            borderBottomWidth: 0.5,
-            shadowColor: colors.background,
-          },
-          headerTintColor: colors.font.primary,
-          headerPressColor: 'red',
+          ...headerCommonStyle,
           headerTitle: strings.Доски,
-          headerRight: () => (
-            <IconButton
-              icon={<PlusIcon color={colors.icon} size="32" />}
-              onPress={handleCreateBoard}
-              style={styles.rightIconView}
-            />
-          ),
           tabBarIcon: ({focused}: {focused: boolean}) => (
             <TaskIcon
               active={focused}

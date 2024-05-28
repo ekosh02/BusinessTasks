@@ -27,13 +27,14 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import {FirestoreCollection} from '../../constants';
 import {CheckBoxesType, RootNavigationType} from '../../@types';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {NativeStackNavigationOptions, NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useUser} from '../../providers';
 import {UserPublicType, UserType} from '../../@types/collections/UserType';
 import {convertUnixToDate, typography} from '../../utils';
 import {useTheme, useToggle} from '../../hooks';
 import {PlusIcon, RemoveIcon} from '../../assets';
 import DatePicker from 'react-native-date-picker';
+import { StackNavigationOptions } from '@react-navigation/stack';
 
 const usersLoadingData = Array.from({length: 10}, (_, index) => ({id: index}));
 
@@ -82,7 +83,7 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
       })
       .then(() => {
         Alert.alert(strings.Успешно);
-        navigation.goBack();
+        navigation.navigate('BoardTabScreen', {reload: true})
       })
       .catch(error => {
         console.error('error', error);
@@ -152,8 +153,22 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
     () =>
       navigation.setOptions({
         headerTitle: boardData ? strings.Доска : strings['Создать доску'],
+        ...headerCommonStyle
       }),
     [],
+  );
+
+  const headerCommonStyle = useMemo<NativeStackNavigationOptions>(
+    () => ({
+      headerStyle: {
+        backgroundColor: colors.background,
+        borderBottomColor: colors.border,
+        borderBottomWidth: 0.5,
+        shadowColor: colors.background,
+      },
+      headerTintColor: colors.font.primary,
+    }),
+    [dark],
   );
 
   const fontColor = useMemo<StyleProp<TextStyle>>(

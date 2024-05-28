@@ -1,4 +1,10 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   FlatList,
   StyleProp,
@@ -8,16 +14,18 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import {Viewer} from '../../components';
+import {IconButton, Viewer} from '../../components';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore'; // Corrected import
 import {FirestoreCollection} from '../../constants';
-import {BoardType} from '../../@types';
+import {BoardType, RootNavigationType} from '../../@types';
 import {width} from '../../utils/screenDimensions';
 import {useTheme} from '../../hooks';
 import {convertUnixToDate, typography} from '../../utils';
 import {strings} from '../../localization/localization';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {PlusIcon, TaskIcon} from '../../assets';
 
 type BoardsFirestoreType =
   FirebaseFirestoreTypes.QuerySnapshot<BoardType> | null;
@@ -25,7 +33,14 @@ type BoardsFirestoreType =
 type BoardFirestoreType =
   FirebaseFirestoreTypes.QueryDocumentSnapshot<BoardType>;
 
-const BoardTabScreen = () => {
+type BoardTabScreenType = NativeStackScreenProps<
+  RootNavigationType,
+  'BoardTabScreen'
+>;
+
+const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
+  const reload = route?.params?.reload;
+
   const {colors, dark} = useTheme();
 
   const [boardsData, setBoardsData] = useState<BoardsFirestoreType>(null);
@@ -44,9 +59,20 @@ const BoardTabScreen = () => {
       .finally(() => setBoardsLoadiing(false));
   };
 
+  const handleCreateBoard = () => {
+    navigation.setParams({reload: false});
+    navigation.navigate('BoardDetailScreen');
+  };
+
   useEffect(() => {
     getBoards();
   }, []);
+
+  useEffect(() => {
+    if (reload) {
+      getBoards();
+    }
+  }, [reload]);
 
   const itemView = useMemo<StyleProp<ViewStyle>>(
     () => ({backgroundColor: colors.card}),
@@ -56,6 +82,20 @@ const BoardTabScreen = () => {
   const textView = useMemo<StyleProp<TextStyle>>(
     () => ({color: colors.font.primary}),
     [dark],
+  );
+
+  useLayoutEffect(
+    () =>
+      navigation.setOptions({
+        headerRight: () => (
+          <IconButton
+            icon={<PlusIcon color={colors.icon} size="32" />}
+            onPress={handleCreateBoard}
+            style={styles.rightIconView}
+          />
+        ),
+      }),
+    [],
   );
 
   const renderItem = useCallback(
@@ -106,6 +146,9 @@ const styles = StyleSheet.create({
   },
   content: {
     ...typography('content'),
+  },
+  rightIconView: {
+    padding: 10,
   },
 });
 

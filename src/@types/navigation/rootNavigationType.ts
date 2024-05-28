@@ -7,7 +7,7 @@ type RootNavigationType = {
   RegistrationScreen: undefined;
   AuthScreen: undefined;
   BoardDetailScreen?: {boardData?: BoardType};
-  BoardTabScreen: undefined;
+  BoardTabScreen: {reload?: boolean};
   ProfileTabScreen: undefined
 };
 
