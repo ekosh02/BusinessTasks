@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {
   StyleProp,
   StyleSheet,
@@ -8,25 +8,29 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
+  FlatList,
 } from 'react-native';
 import {Modal, Viewer} from '../../components';
-import {useDarkMode, useUser} from '../../providers';
+import {useDarkMode, useLanguage, useUser} from '../../providers';
 import {setStorage, typography} from '../../utils';
 import {useTheme, useToggle} from '../../hooks';
 import TextButton from '../../components/buttons/TextButton';
 import {strings} from '../../localization/localization';
 import {ArrowMiniRightIcon} from '../../assets';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootNavigationType} from '../../@types';
+import {RootNavigationType, availableLanguagesType} from '../../@types';
 
 type ProfileTabScreenType = NativeStackScreenProps<
   RootNavigationType,
   'ProfileTabScreen'
 >;
 
+const availableLanguages: availableLanguagesType[] = ['kk', 'ru', 'en'];
+
 const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
   const {user, setUser} = useUser();
   const {colors, dark} = useTheme();
+  const {setlanguage, language} = useLanguage();
   const [languageVisible, toggleLanguageVisible] = useToggle(false);
 
   const {isDarkMode, setIsDarkMode} = useDarkMode();
@@ -40,6 +44,14 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
     await setStorage('isDarkMode', !isDarkMode);
     setIsDarkMode(!isDarkMode);
   };
+  
+  const handleLanguageChange = async (language: availableLanguagesType) => {
+    strings.setLanguage(language)
+    await setStorage('language', language);
+    setlanguage(language);
+    toggleLanguageVisible();
+    
+  };
 
   const sections = useMemo(
     () => [
@@ -48,7 +60,7 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
         title: strings.Язык,
         onPress: toggleLanguageVisible,
         rightView: <ArrowMiniRightIcon color={colors.icon} />,
-        show: false,
+        show: true,
       },
       {
         id: 2,
@@ -65,7 +77,7 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
         show: true,
       },
     ],
-    [isDarkMode],
+    [isDarkMode, language],
   );
 
   const profilePosterView = useMemo<StyleProp<ViewStyle> | undefined>(
@@ -122,7 +134,17 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
         textStyle={logoutTextStyle}
       />
       <Modal visible={languageVisible} onClose={toggleLanguageVisible}>
-        <Text></Text>
+        <FlatList
+          data={availableLanguages}
+          keyExtractor={item => item}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              onPress={() => handleLanguageChange(item)}
+              style={styles.languageItemView}>
+              <Text style={styles.languageText}>{item}</Text>
+            </TouchableOpacity>
+          )}
+        />
       </Modal>
     </Viewer>
   );
@@ -151,6 +173,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     borderBottomWidth: 1,
+  },
+  languageItemView: {
+    backgroundColor: 'red',
+    marginTop: 10,
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+  },
+
+  languageText: {
+    ...typography('headings'),
+    // color: '#fff'
+    // textAlign: 'center',
+    // textAlignVertical: 'center',
   },
 });
 

@@ -1,10 +1,12 @@
 import Main from './src/Main';
-import {DarkModeProvider, UserProvider} from './src/providers';
+import {DarkModeProvider, UserProvider, LanguageProvider} from './src/providers';
 
 const App = () => (
   <UserProvider>
     <DarkModeProvider>
-      <Main />
+      <LanguageProvider>
+        <Main />
+      </LanguageProvider>
     </DarkModeProvider>
   </UserProvider>
 );

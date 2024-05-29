@@ -1,6 +1,7 @@
 enum StorageKeys {
   isDarkMode = 'isDarkMode',
-  userData = 'userData'
+  userData = 'userData',
+  language = 'language',
 }
 
 export default StorageKeys;

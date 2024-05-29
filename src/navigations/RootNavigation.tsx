@@ -9,7 +9,7 @@ import SplashScreen from '../screens/splash/SplashScreen';
 import {BottomNavigation} from './index';
 import RegistrationScreen from '../screens/auth/RegistrationScreen';
 import AuthScreen from '../screens/auth/AuthScreen';
-import {useUser} from '../providers';
+import {useLanguage, useUser} from '../providers';
 import {useTheme} from '../hooks';
 import {strings} from '../localization/localization';
 import BoardDetailScreen from '../screens/board/BoardDetailScreen';
@@ -23,6 +23,8 @@ type RouteType = {
 };
 
 const RootNavigation = () => {
+  const {language} = useLanguage();
+
   const {user} = useUser();
 
   const {colors, dark} = useTheme();
@@ -72,7 +74,7 @@ const RootNavigation = () => {
         },
       },
     ],
-    [strings.getLanguage(), dark],
+    [language, dark],
   );
 
   const privateRoutes = useMemo<RouteType[]>(
@@ -97,7 +99,7 @@ const RootNavigation = () => {
         },
       },
     ],
-    [strings.getLanguage(), dark],
+    [language, dark],
   );
 
   const routes = useMemo(

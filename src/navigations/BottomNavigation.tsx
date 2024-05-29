@@ -12,6 +12,7 @@ import {strings} from '../localization/localization';
 import {IconButton} from '../components';
 import {StyleSheet} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import { useLanguage } from '../providers';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,6 +29,7 @@ type BottomNavigationProps = NativeStackScreenProps<
 
 const BottomNavigation = ({navigation}: BottomNavigationProps) => {
   const {colors, dark} = useTheme();
+  const {language} = useLanguage()
 
   const headerCommonStyle = useMemo<BottomTabNavigationOptions>(
     () => ({
@@ -74,7 +76,7 @@ const BottomNavigation = ({navigation}: BottomNavigationProps) => {
         },
       },
     ],
-    [dark, strings.getLanguage()],
+    [dark, language],
   );
 
   const screenOptions: BottomTabNavigationOptions = useMemo(
