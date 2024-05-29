@@ -8,7 +8,8 @@ type RootNavigationType = {
   AuthScreen: undefined;
   BoardDetailScreen?: {boardData?: BoardType};
   BoardTabScreen: {reload?: boolean};
-  ProfileTabScreen: undefined
+  ProfileTabScreen: undefined;
+  AllUsers: undefined;
 };
 
 export default RootNavigationType;

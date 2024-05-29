@@ -51,6 +51,8 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
     setlanguage(language);
   };
 
+  const handleAllUsers = () => navigation.navigate('AllUsers');
+
   const sections = useMemo(
     () => [
       {
@@ -72,6 +74,13 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
             value={isDarkMode}
           />
         ),
+        show: true,
+      },
+      {
+        id: 3,
+        title: strings['Все пользователи'],
+        onPress: handleAllUsers,
+        rightView: <ArrowMiniRightIcon color={colors.icon} />,
         show: true,
       },
     ],

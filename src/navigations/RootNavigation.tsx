@@ -13,6 +13,7 @@ import {useLanguage, useUser} from '../providers';
 import {useTheme} from '../hooks';
 import {strings} from '../localization/localization';
 import BoardDetailScreen from '../screens/board/BoardDetailScreen';
+import AllUsers from '../screens/profile/AllUsers';
 
 const Stack = createStackNavigator<RootNavigationType>();
 
@@ -98,13 +99,22 @@ const RootNavigation = () => {
           ...headerCommonStyle,
         },
       },
+      {
+        name: 'AllUsers',
+        component: AllUsers,
+        options: {
+          headerTitle: strings['Все пользователи'],
+          ...headerCommonStyle,
+          // headerLeft: () => null,
+        },
+      },
     ],
     [language, dark],
   );
 
   const routes = useMemo(
     () => (user?.uid ? privateRoutes : publicRoutes),
-    [user?.uid],
+    [user?.uid, language, dark],
   );
 
   return (
