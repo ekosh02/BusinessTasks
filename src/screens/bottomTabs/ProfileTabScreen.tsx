@@ -44,13 +44,11 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
     await setStorage('isDarkMode', !isDarkMode);
     setIsDarkMode(!isDarkMode);
   };
-  
+
   const handleLanguageChange = async (language: availableLanguagesType) => {
-    strings.setLanguage(language)
+    strings.setLanguage(language);
     await setStorage('language', language);
     setlanguage(language);
-    toggleLanguageVisible();
-    
   };
 
   const sections = useMemo(
@@ -95,16 +93,20 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
     [dark],
   );
 
-  const sectionView = useMemo<StyleProp<ViewStyle> | undefined>(
+  const sectionView = useMemo<StyleProp<ViewStyle>>(
     () => ({borderBottomColor: colors.border, backgroundColor: colors.card}),
     [dark],
   );
 
-  const sectionText = useMemo<StyleProp<TextStyle> | undefined>(
+  const sectionText = useMemo<StyleProp<TextStyle>>(
     () => ({color: colors.font.primary}),
     [dark],
   );
 
+  const languageText = useMemo<StyleProp<TextStyle>>(
+    () => ({color: colors.icon}),
+    [dark, languageVisible],
+  );
   return (
     <Viewer scroll style={styles.view}>
       <View style={styles.profileView}>
@@ -137,11 +139,18 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
         <FlatList
           data={availableLanguages}
           keyExtractor={item => item}
-          renderItem={({item}) => (
+          contentContainerStyle={styles.languageModalView}
+          renderItem={({item}: {item: availableLanguagesType}) => (
             <TouchableOpacity
               onPress={() => handleLanguageChange(item)}
-              style={styles.languageItemView}>
-              <Text style={styles.languageText}>{item}</Text>
+              style={[
+                styles.languageItemView,
+                {
+                  backgroundColor:
+                    item === language ? colors.primary : colors.card,
+                },
+              ]}>
+              <Text style={[styles.languageText, languageText]}>{item}</Text>
             </TouchableOpacity>
           )}
         />
@@ -175,14 +184,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   languageItemView: {
-    backgroundColor: 'red',
-    marginTop: 10,
     height: 42,
+    marginBottom: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
+    borderBottomWidth: 1,
+    borderRadius: 6,
   },
-
+  languageModalView: {
+    marginTop: 10,
+  },
   languageText: {
     ...typography('headings'),
     // color: '#fff'
