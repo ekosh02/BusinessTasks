@@ -180,6 +180,9 @@ const styles = StyleSheet.create({
   content: {
     ...typography('content'),
   },
+  rightIconView: {
+    padding: 10,
+  },
 });
 
 export default BoardTabScreen;
