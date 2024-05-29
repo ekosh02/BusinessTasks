@@ -106,7 +106,7 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
           />
         ),
       }),
-    [],
+    [dark],
   );
 
   const renderItem = useCallback(
