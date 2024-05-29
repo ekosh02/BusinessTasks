@@ -12,6 +12,7 @@ import {
   Text,
   TextStyle,
   TouchableOpacity,
+  View,
   ViewStyle,
 } from 'react-native';
 import {IconButton, ProgressBar, Viewer} from '../../components';
@@ -48,6 +49,7 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
   const [boardsError, setBoardsError] = useState<Error | null>(null);
 
   const getBoards = async () => {
+    setBoardsLoadiing(true);
     await firestore()
       .collection(FirestoreCollection.boards)
       .get()
@@ -88,8 +90,8 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
     [dark],
   );
 
-  const removeButtonView = useMemo<StyleProp<TextStyle>>(
-    () => ({backgroundColor: `${colors.red}55`}),
+  const memberTextView = useMemo<StyleProp<ViewStyle>>(
+    () => ({backgroundColor: colors.background}),
     [dark],
   );
 
@@ -116,36 +118,59 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
       ).length;
       const totalCount = value.checkboxes.length;
       const percentage = (trueCount / totalCount) * 100;
-      const percentageToFix = percentage.toFixed(2);
+      const percentageToFix = parseFloat(percentage.toFixed(2));
 
       const dateTextColor = dateDelay(value.expiresAt as number)
         ? colors.red
         : colors.placeholder;
 
+      console.log('value', value.expiresAt);
+
       return (
         <TouchableOpacity
           style={[styles.itemView, itemView]}
           onPress={() => handleBoard(item)}>
-          <Text numberOfLines={2} style={[styles.headings, textView]}>
-            {value.name}
-          </Text>
-          <Text numberOfLines={6} style={[styles.content, textView]}>
-            {value.description}
-          </Text>
+          {value.name && (
+            <Text numberOfLines={2} style={[styles.headings, textView]}>
+              {value.name}
+            </Text>
+          )}
+          {value.description && (
+            <Text numberOfLines={6} style={[styles.content, textView]}>
+              {value.description}
+            </Text>
+          )}
           <Text numberOfLines={2} style={[styles.content, textView]}>
-            {strings.Создатель} {value.creater.name} {value.creater.surname}
+            {strings.Создатель}
+            {': '}
+            {value.creater.name} {value.creater.surname}
           </Text>
-          <Text style={[styles.content, textView]}>
-            {strings['Кол-во участников']}: {value.members.length}
-          </Text>
-          <Text style={[styles.content, {color: dateTextColor}]}>
-            {strings.Дата}: {convertUnixToDate(value?.expiresAt)}
-          </Text>
-          <ProgressBar percentage={parseFloat(percentageToFix)} />
+          {value.members.length ? (
+            <Text style={[styles.content, textView]}>
+              {strings.Участники}:
+            </Text>
+          ) : null}
+          <View style={styles.membRowersView}>
+            {value.members.length
+              ? value.members.map((member, index) => (
+                  <View style={[styles.memberTextView, memberTextView]}>
+                    <Text key={member.uid} style={[styles.content, textView]}>
+                      {member.name} {member.surname}
+                    </Text>
+                  </View>
+                ))
+              : null}
+          </View>
+          {value.expiresAt && (
+            <Text style={[styles.content, {color: dateTextColor}]}>
+              {strings.Дата}: {convertUnixToDate(value?.expiresAt)}
+            </Text>
+          )}
+          <ProgressBar percentage={percentageToFix} />
         </TouchableOpacity>
       );
     },
-    [dark],
+    [dark, boardsLoading],
   );
 
   const keyExtractor = useCallback(
@@ -159,6 +184,8 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
         data={boardsData?.docs}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
+        onRefresh={getBoards}
+        refreshing={boardsLoading}
       />
     </Viewer>
   );
@@ -182,6 +209,18 @@ const styles = StyleSheet.create({
   },
   rightIconView: {
     padding: 10,
+  },
+  memberTextView: {
+    marginVertical: 3,
+    marginLeft: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+    backgroundColor: 'red',
+  },
+  membRowersView: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 });
 
