@@ -22,15 +22,10 @@ const SplashScreen = ({navigation}: SplasScreenType) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const {colors, dark} = useTheme();
   const {user, setUser} = useUser();
-  const {setIsDarkMode} = useDarkMode();
 
-  const setting = async () => {
-    const userData: UserType = await getStorage('userData');
-    const isDarkMode = await getStorage('isDarkMode');
-    setIsDarkMode(isDarkMode);
-    userData && setUser(userData);
+  const setting = async () => {    
     setTimeout(
-      () => navigation.replace(userData ? 'BottomNavigation' : 'AuthScreen'),
+      () => navigation.replace(user?.uid ? 'BottomNavigation' : 'AuthScreen'),
       1500,
     );
   };
@@ -43,6 +38,7 @@ const SplashScreen = ({navigation}: SplasScreenType) => {
     }).start();
   }, [fadeAnim]);
 
+  
   useEffect(() => {
     setting();
   }, [user?.uid]);
@@ -53,6 +49,9 @@ const SplashScreen = ({navigation}: SplasScreenType) => {
     }),
     [dark],
   );
+
+  console.log('dark', dark);
+  
 
   const text = useMemo<StyleProp<TextStyle> | undefined>(
     () => ({

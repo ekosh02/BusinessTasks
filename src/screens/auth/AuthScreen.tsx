@@ -59,7 +59,6 @@ const AuthScreen = ({navigation}: AuthScreennType) => {
               if (userData) {
                 await setStorage('userData', userData);
                 setUser(userData as UserType);
-                navigation.replace('BottomNavigation');
               }
             })
             .catch((error: Error) => {

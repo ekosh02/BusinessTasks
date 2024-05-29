@@ -1,5 +1,12 @@
-import Main from "./src/Main";
+import Main from './src/Main';
+import {DarkModeProvider, UserProvider} from './src/providers';
 
-const App = () => <Main/>
+const App = () => (
+  <UserProvider>
+    <DarkModeProvider>
+      <Main />
+    </DarkModeProvider>
+  </UserProvider>
+);
 
-export default App
+export default App;
