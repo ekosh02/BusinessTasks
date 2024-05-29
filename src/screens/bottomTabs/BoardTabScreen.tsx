@@ -14,10 +14,10 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import {IconButton, PrimaryButton, ProgressBar, Viewer} from '../../components';
+import {IconButton, ProgressBar, Viewer} from '../../components';
 import firestore, {
   FirebaseFirestoreTypes,
-} from '@react-native-firebase/firestore'; // Corrected import
+} from '@react-native-firebase/firestore';
 import {FirestoreCollection} from '../../constants';
 import {BoardType, RootNavigationType} from '../../@types';
 import {width} from '../../utils/screenDimensions';
@@ -25,7 +25,7 @@ import {useTheme} from '../../hooks';
 import {convertUnixToDate, dateDelay, typography} from '../../utils';
 import {strings} from '../../localization/localization';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {PlusIcon, RemoveIcon} from '../../assets';
+import {PlusIcon} from '../../assets';
 
 type BoardsFirestoreType =
   FirebaseFirestoreTypes.QuerySnapshot<BoardType> | null;
@@ -160,12 +160,6 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
         keyExtractor={keyExtractor}
         renderItem={renderItem}
       />
-      {boardsData?.docs?.length ? (
-        <IconButton
-          icon={<RemoveIcon color='#fff' size='34'/>}
-          style={[styles.removeButtonView, removeButtonView]}
-        />
-      ) : null}
     </Viewer>
   );
 };
@@ -185,17 +179,6 @@ const styles = StyleSheet.create({
   },
   content: {
     ...typography('content'),
-  },
-  rightIconView: {
-    padding: 10,
-  },
-  removeButtonView: {
-    position: 'absolute',
-    right: 16,
-    bottom: 16,
-    height: 50,
-    width: 50,
-    borderRadius: 25,
   },
 });
 

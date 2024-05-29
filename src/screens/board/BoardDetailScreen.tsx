@@ -32,14 +32,13 @@ import {
   NativeStackNavigationOptions,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {useUser} from '../../providers';
+import {useLanguage, useUser} from '../../providers';
 import {UserPublicType, UserType} from '../../@types/collections/UserType';
 import {convertUnixToDate, dateDelay, typography} from '../../utils';
 import {useTheme, useToggle} from '../../hooks';
 import {CheckIcon, PlusIcon, RemoveIcon} from '../../assets';
 import DatePicker from 'react-native-date-picker';
-import {StackNavigationOptions} from '@react-navigation/stack';
-import {width} from '../../utils/screenDimensions';
+import TextButton from '../../components/buttons/TextButton';
 
 const usersLoadingData = Array.from({length: 10}, (_, index) => ({id: index}));
 
@@ -51,6 +50,7 @@ type BoardDetailScreenType = NativeStackScreenProps<
 const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
   const boardData = route.params?.boardData;
 
+  const {language} = useLanguage();
   const {colors, dark} = useTheme();
   const {user} = useUser();
 
@@ -72,11 +72,13 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
     boardData?.members ? boardData.members : [],
   );
   const [createLoading, setCreateLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [usersData, setUsersData] = useState<UserType[] | []>([]);
   const [usersLoading, setUsersLoading] = useState(true);
 
-  const handleCreateOrUpdateBoard = async () => {
+  const handleCreateBoard = async () => {
+    setCreateLoading(true);
     const userData: UserPublicType = {
       uid: user?.uid,
       name: user?.name,
@@ -84,38 +86,21 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
       email: user?.email,
     };
 
-    setCreateLoading(true);
-
     try {
-      if (boardData) {
-        await firestore()
-          .collection(FirestoreCollection.boards)
-          .doc(boardData.id)
-          .update({
-            name: name,
-            description: description,
-            checkboxes: checkboxes,
-            members: selectedMembers,
-            expiresAt: expiresAt,
-          });
-        Alert.alert(strings.Успешно, strings['Доска обновлена']);
-      } else {
-        const newBoardRef = firestore()
-          .collection(FirestoreCollection.boards)
-          .doc();
-        await newBoardRef.set({
-          id: newBoardRef.id,
-          name: name,
-          description: description,
-          createdAt: Date.now(),
-          creater: userData,
-          members: selectedMembers,
-          checkboxes: checkboxes,
-          expiresAt: expiresAt,
-        });
-        Alert.alert(strings.Успешно, strings['Доска создана']);
-      }
-
+      const newBoardRef = firestore()
+        .collection(FirestoreCollection.boards)
+        .doc();
+      await newBoardRef.set({
+        id: newBoardRef.id,
+        name: name,
+        description: description,
+        createdAt: Date.now(),
+        creater: userData,
+        members: selectedMembers,
+        checkboxes: checkboxes,
+        expiresAt: expiresAt,
+      });
+      Alert.alert(strings.Успешно, strings['Доска создана']);
       navigation.navigate('BoardTabScreen', {reload: true});
     } catch (error) {
       console.error('error', error);
@@ -123,6 +108,63 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
     } finally {
       setCreateLoading(false);
     }
+  };
+
+  const handleUpdateBoard = async () => {
+    setCreateLoading(true);
+    try {
+      await firestore()
+        .collection(FirestoreCollection.boards)
+        .doc(boardData?.id)
+        .update({
+          name: name,
+          description: description,
+          checkboxes: checkboxes,
+          members: selectedMembers,
+          expiresAt: expiresAt,
+        });
+      Alert.alert(strings.Успешно, strings['Доска обновлена']);
+      navigation.navigate('BoardTabScreen', {reload: true});
+    } catch (error) {
+      console.error('error', error);
+      Alert.alert(strings['Какая-то ошибка']);
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
+  const handleDeleteBoard = async () => {
+    setDeleteLoading(true);
+    try {
+      await firestore()
+        .collection(FirestoreCollection.boards)
+        .doc(boardData?.id)
+        .delete();
+      Alert.alert(strings.Успешно, strings['Доска успешно удалено!']);
+      navigation.navigate('BoardTabScreen', {reload: true});
+    } catch (error) {
+      console.error('error', error);
+      Alert.alert(strings.Ошибка, strings['Ошибка при удалении доски!']);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+  const handleDeleteAlarmBoard = () => {
+    Alert.alert(
+      strings['Удалить доску'],
+      strings['Вы уверены, что хотите удалить доску?'],
+      [
+        {
+          text:  strings.Отмена,
+          style: 'cancel',
+        },
+        {
+          text: strings.Удалить,
+          style: 'destructive',
+          onPress: handleDeleteBoard,
+        },
+      ],
+    );
   };
 
   const getUsers = async () => {
@@ -235,6 +277,11 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
   const iconCheckedBorderColor = useMemo<StyleProp<ViewStyle>>(
     () => ({borderColor: colors.green}),
     [],
+  );
+
+  const deleteTextColor = useMemo<StyleProp<TextStyle>>(
+    () => ({color: colors.red}),
+    [dark],
   );
 
   const dateButtonView = useMemo<StyleProp<TextStyle>>(
@@ -373,8 +420,17 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
         style={styles.createButtonView}
         title={boardData ? strings.Изменить : strings.Создать}
         loading={createLoading}
-        onPress={handleCreateOrUpdateBoard}
+        onPress={boardData ? handleUpdateBoard : handleCreateBoard}
       />
+      {boardData && (
+        <TextButton
+          style={styles.deleteButtonView}
+          textStyle={deleteTextColor}
+          title={strings.Удалить}
+          loading={deleteLoading}
+          onPress={handleDeleteAlarmBoard}
+        />
+      )}
       <DatePicker
         date={expiresAt ? new Date(expiresAt) : new Date()}
         open={dateModalVisible}
@@ -392,7 +448,7 @@ const BoardDetailScreen = ({navigation, route}: BoardDetailScreenType) => {
         confirmText={strings.Выбрать}
         cancelText={strings.Отмена}
         title={strings['Выберите дедлайн']}
-        locale={strings.getLanguage()}
+        locale={language}
       />
     </Viewer>
   );
@@ -404,6 +460,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   createButtonView: {
+    marginTop: 16,
+    borderRadius: 10,
+  },
+  deleteButtonView: {
     marginVertical: 16,
     borderRadius: 10,
   },
