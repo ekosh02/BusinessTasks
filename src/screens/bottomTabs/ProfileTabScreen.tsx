@@ -53,6 +53,9 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
 
   const handleAllUsers = () => navigation.navigate('AllUsers');
 
+  const handleEdit = () => navigation.navigate('ProfileEditScreen')
+
+
   const sections = useMemo(
     () => [
       {
@@ -97,7 +100,7 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
     [dark],
   );
 
-  const logoutTextStyle = useMemo<StyleProp<TextStyle> | undefined>(
+  const logoutText = useMemo<StyleProp<TextStyle> | undefined>(
     () => ({color: colors.red}),
     [dark],
   );
@@ -116,6 +119,7 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
     () => ({color: colors.icon}),
     [dark, languageVisible],
   );
+
   return (
     <Viewer scroll style={styles.view}>
       <View style={styles.profileView}>
@@ -126,6 +130,7 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
         <Text style={[styles.profileEmailText, profileText]}>
           {user?.email}
         </Text>
+        <TextButton title={strings['Изменить профиль']} textStyle={sectionText} onPress={handleEdit} />
       </View>
       {sections.map(
         section =>
@@ -142,7 +147,7 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
       <TextButton
         title={strings.Выйти}
         onPress={handleLogout}
-        textStyle={logoutTextStyle}
+        textStyle={logoutText}
       />
       <Modal visible={languageVisible} onClose={toggleLanguageVisible}>
         <FlatList

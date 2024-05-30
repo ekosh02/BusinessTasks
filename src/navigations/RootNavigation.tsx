@@ -14,6 +14,7 @@ import {useTheme} from '../hooks';
 import {strings} from '../localization/localization';
 import BoardDetailScreen from '../screens/board/BoardDetailScreen';
 import AllUsers from '../screens/profile/AllUsers';
+import ProfileEditScreen from '../screens/profile/ProfileEditScreen';
 
 const Stack = createStackNavigator<RootNavigationType>();
 
@@ -105,7 +106,14 @@ const RootNavigation = () => {
         options: {
           headerTitle: strings['Все пользователи'],
           ...headerCommonStyle,
-          // headerLeft: () => null,
+        },
+      },
+      {
+        name: 'ProfileEditScreen',
+        component: ProfileEditScreen,
+        options: {
+          headerTitle: strings['Изменить профиль'],
+          ...headerCommonStyle,
         },
       },
     ],

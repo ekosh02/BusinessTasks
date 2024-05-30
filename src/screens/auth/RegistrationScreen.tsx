@@ -65,6 +65,7 @@ const RegistrationScreen = ({navigation}: RegistrationScreenType) => {
             const userData: UserType = {
               uid: uid,
               name: dataSource.name,
+              avatar: null,
               surname: dataSource.surname,
               accCreated: Date.now(),
               email: dataSource.email,

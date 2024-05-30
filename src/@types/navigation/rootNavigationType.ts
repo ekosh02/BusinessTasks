@@ -10,6 +10,7 @@ type RootNavigationType = {
   BoardTabScreen: {reload?: boolean};
   ProfileTabScreen: undefined;
   AllUsers: undefined;
+  ProfileEditScreen: undefined,
 };
 
 export default RootNavigationType;
