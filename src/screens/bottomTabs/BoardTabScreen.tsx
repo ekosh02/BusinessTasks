@@ -118,14 +118,15 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
       ).length;
       const totalCount = value.checkboxes.length;
       const percentage = (trueCount / totalCount) * 100;
-      const percentageToFix = parseFloat(percentage.toFixed(2));
+      const percentageFixFloat = parseFloat(percentage.toFixed(2));
+      const percentageCheckNaN = isNaN(percentageFixFloat) ? 0 : percentageFixFloat
+ 
 
       const dateTextColor = dateDelay(value.expiresAt as number)
         ? colors.red
         : colors.placeholder;
 
-      console.log('value', value.expiresAt);
-
+        
       return (
         <TouchableOpacity
           style={[styles.itemView, itemView]}
@@ -166,7 +167,7 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
               {strings.Дата}: {convertUnixToDate(value?.expiresAt)}
             </Text>
           )}
-          <ProgressBar percentage={percentageToFix} />
+          <ProgressBar percentage={percentageCheckNaN} />
         </TouchableOpacity>
       );
     },

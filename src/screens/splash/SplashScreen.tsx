@@ -50,9 +50,6 @@ const SplashScreen = ({navigation}: SplasScreenType) => {
     [dark],
   );
 
-  console.log('dark', dark);
-  
-
   const text = useMemo<StyleProp<TextStyle> | undefined>(
     () => ({
       opacity: fadeAnim,
