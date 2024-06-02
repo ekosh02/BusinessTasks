@@ -122,9 +122,9 @@ const RootNavigation = () => {
 
   const routes = useMemo(
     () => (user?.uid ? privateRoutes : publicRoutes),
-    [user?.uid, language, dark],
+    [user?.uid],
   );
-
+  
   return (
     <NavigationContainer>
       <Stack.Navigator
