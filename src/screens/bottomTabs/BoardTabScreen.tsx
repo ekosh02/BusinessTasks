@@ -48,6 +48,14 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
   const [boardsLoading, setBoardsLoadiing] = useState(true);
   const [boardsError, setBoardsError] = useState<Error | null>(null);
 
+  const handleCreateBoard = () => {
+    navigation.setParams({reload: false});
+    navigation.navigate('BoardDetailScreen');
+  };
+
+  const handleBoard = (item: BoardFirestoreType) =>
+    navigation.navigate('BoardDetailScreen', {boardData: item.data()});
+
   const getBoards = async () => {
     setBoardsLoadiing(true);
     await firestore()
@@ -60,14 +68,6 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
       })
       .finally(() => setBoardsLoadiing(false));
   };
-
-  const handleCreateBoard = () => {
-    navigation.setParams({reload: false});
-    navigation.navigate('BoardDetailScreen');
-  };
-
-  const handleBoard = (item: BoardFirestoreType) =>
-    navigation.navigate('BoardDetailScreen', {boardData: item.data()});
 
   useEffect(() => {
     getBoards();
@@ -119,14 +119,14 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
       const totalCount = value.checkboxes.length;
       const percentage = (trueCount / totalCount) * 100;
       const percentageFixFloat = parseFloat(percentage.toFixed(2));
-      const percentageCheckNaN = isNaN(percentageFixFloat) ? 0 : percentageFixFloat
- 
+      const percentageCheckNaN = isNaN(percentageFixFloat)
+        ? 0
+        : percentageFixFloat;
 
       const dateTextColor = dateDelay(value.expiresAt as number)
         ? colors.red
         : colors.placeholder;
 
-        
       return (
         <TouchableOpacity
           style={[styles.itemView, itemView]}
@@ -147,9 +147,7 @@ const BoardTabScreen = ({route, navigation}: BoardTabScreenType) => {
             {value.creater.name} {value.creater.surname}
           </Text>
           {value.members.length ? (
-            <Text style={[styles.content, textView]}>
-              {strings.Участники}:
-            </Text>
+            <Text style={[styles.content, textView]}>{strings.Участники}:</Text>
           ) : null}
           <View style={styles.membRowersView}>
             {value.members.length
