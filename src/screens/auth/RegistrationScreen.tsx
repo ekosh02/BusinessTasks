@@ -54,7 +54,7 @@ const RegistrationScreen = ({navigation}: RegistrationScreenType) => {
     return true;
   };
 
-  const handleLogin = async () => {
+  const handleRegisgration = async () => {
     if (isValidData()) {
       setLoading(true);
       await auth()
@@ -145,7 +145,7 @@ const RegistrationScreen = ({navigation}: RegistrationScreenType) => {
         style={styles.buttonView}
         title={strings.Регистрация}
         loading={loading}
-        onPress={handleLogin}
+        onPress={handleRegisgration}
       />
     </Viewer>
   );
