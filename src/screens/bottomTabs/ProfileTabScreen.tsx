@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {
   StyleProp,
   StyleSheet,
@@ -9,6 +9,7 @@ import {
   View,
   ViewStyle,
   FlatList,
+  Linking,
 } from 'react-native';
 import {Modal, Viewer} from '../../components';
 import {useDarkMode, useLanguage, useUser} from '../../providers';
@@ -53,8 +54,9 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
 
   const handleAllUsers = () => navigation.navigate('AllUsers');
 
-  const handleEdit = () => navigation.navigate('ProfileEditScreen')
-
+  const handleEdit = () => navigation.navigate('ProfileEditScreen');
+  const handleSupport = async () =>
+    await Linking.openURL('https://t.me/Aidos0451');
 
   const sections = useMemo(
     () => [
@@ -83,6 +85,13 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
         id: 3,
         title: strings['Все пользователи'],
         onPress: handleAllUsers,
+        rightView: <ArrowMiniRightIcon color={colors.icon} />,
+        show: true,
+      },
+      {
+        id: 4,
+        title: strings.Поддержка,
+        onPress: handleSupport,
         rightView: <ArrowMiniRightIcon color={colors.icon} />,
         show: true,
       },
@@ -130,7 +139,11 @@ const ProfileTabScreen = ({navigation}: ProfileTabScreenType) => {
         <Text style={[styles.profileEmailText, profileText]}>
           {user?.email}
         </Text>
-        <TextButton title={strings['Изменить профиль']} textStyle={sectionText} onPress={handleEdit} />
+        <TextButton
+          title={strings['Изменить профиль']}
+          textStyle={sectionText}
+          onPress={handleEdit}
+        />
       </View>
       {sections.map(
         section =>
